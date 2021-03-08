@@ -100,16 +100,18 @@ void Range::set_value(double p_val) {
 	shared->emit_value_changed();
 }
 void Range::set_min(double p_min) {
-	shared->min = p_min;
-	set_value(shared->val);
+
+	p_min > shared->max ? shared->min = shared->max : shared->min = p_min;
+	set_page(shared->page);
 
 	shared->emit_changed("min");
 
 	update_configuration_warning();
 }
 void Range::set_max(double p_max) {
-	shared->max = p_max;
-	set_value(shared->val);
+
+	p_max < shared->min ? shared->max = shared->min : shared->max = p_max;
+	set_page(shared->page);
 
 	shared->emit_changed("max");
 }
@@ -120,7 +122,7 @@ void Range::set_step(double p_step) {
 }
 void Range::set_page(double p_page) {
 
-	shared->page = p_page;
+	shared->page = CLAMP(p_page, shared->min, shared->max);
 	set_value(shared->val);
 
 	shared->emit_changed("page");
